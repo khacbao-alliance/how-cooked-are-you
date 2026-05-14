@@ -28,6 +28,17 @@ pipeline {
             }
         }
 
+        stage('Debug') {
+            steps {
+                sh '''
+                    node --version
+                    npm --version
+                    ls node_modules/@tailwindcss/
+                    node -e "require('@tailwindcss/postcss'); console.log('OK')"
+                '''
+            }
+        }
+
         stage('Build') {
             steps {
                 withCredentials([
