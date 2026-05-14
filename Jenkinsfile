@@ -4,7 +4,6 @@ pipeline {
     environment {
         APP_DIR = '/var/www/how-cooked-are-you'
         PM2_APP_NAME = 'how-cooked-are-you'
-        NODE_ENV = 'production'
     }
 
     options {
@@ -23,18 +22,7 @@ pipeline {
             steps {
                 sh '''
                     rm -f package-lock.json
-                    npm install
-                '''
-            }
-        }
-
-        stage('Debug') {
-            steps {
-                sh '''
-                    node --version
-                    npm --version
-                    ls node_modules/@tailwindcss/
-                    node -e "require('@tailwindcss/postcss'); console.log('OK')"
+                    npm install --include=dev
                 '''
             }
         }
