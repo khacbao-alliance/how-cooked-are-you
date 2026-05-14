@@ -21,7 +21,7 @@ pipeline {
 
         stage('Install') {
             steps {
-                sh 'npm ci --prefer-offline'
+                sh 'npm ci'
             }
         }
 
