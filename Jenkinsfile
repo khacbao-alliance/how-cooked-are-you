@@ -29,38 +29,46 @@ pipeline {
 
         stage('Build') {
             steps {
-                withCredentials([
-                    string(credentialsId: 'GEMINI_API_KEY', variable: 'GOOGLE_GENERATIVE_AI_API_KEY'),
-                    string(credentialsId: 'GEMINI_MODEL', variable: 'GEMINI_MODEL')
-                ]) {
-                    sh 'npm run build'
-                }
+                sh 'npm run build'
             }
         }
 
         stage('Deploy') {
             steps {
-                sh """
-                    # Sync files to app directory (excluding node_modules)
-                    rsync -av --delete \
-                        --exclude='node_modules' \
-                        --exclude='.git' \
-                        --exclude='.env.local' \
-                        ./ ${APP_DIR}/
+                withCredentials([
+                    string(credentialsId: 'GEMINI_API_KEY', variable: 'GEMINI_API_KEY'),
+                    string(credentialsId: 'GEMINI_MODEL', variable: 'GEMINI_MODEL')
+                ]) {
+                    sh '''
+                        set -e
 
-                    cd ${APP_DIR}
+                        # Sync files to app directory (excluding node_modules and env files)
+                        rsync -av --delete \
+                            --exclude='node_modules' \
+                            --exclude='.git' \
+                            --exclude='.env.local' \
+                            ./ "${APP_DIR}/"
 
-                    # Install production dependencies only
-                    npm install --omit=dev
+                        # Write runtime env file (Next.js loads .env.local on `next start`)
+                        umask 077
+                        : > "${APP_DIR}/.env.local"
+                        printf 'GEMINI_API_KEY=%s\n' "${GEMINI_API_KEY}" >> "${APP_DIR}/.env.local"
+                        printf 'GEMINI_MODEL=%s\n'   "${GEMINI_MODEL}"   >> "${APP_DIR}/.env.local"
 
-                    # Restart or start the app with PM2
-                    if pm2 describe ${PM2_APP_NAME} > /dev/null 2>&1; then
-                        pm2 reload ${PM2_APP_NAME} --update-env
-                    else
-                        pm2 start ecosystem.config.js
-                        pm2 save
-                    fi
-                """
+                        cd "${APP_DIR}"
+
+                        # Install production dependencies only
+                        npm install --omit=dev
+
+                        # Restart or start the app with PM2 (--update-env picks up new env)
+                        if pm2 describe "${PM2_APP_NAME}" > /dev/null 2>&1; then
+                            pm2 reload "${PM2_APP_NAME}" --update-env
+                        else
+                            pm2 start ecosystem.config.js
+                            pm2 save
+                        fi
+                    '''
+                }
             }
         }
     }
