@@ -21,7 +21,7 @@ pipeline {
 
         stage('Install') {
             steps {
-                sh 'npm ci'
+                sh 'npm install'
             }
         }
 
@@ -49,7 +49,7 @@ pipeline {
                     cd ${APP_DIR}
 
                     # Install production dependencies only
-                    npm ci --omit=dev --prefer-offline
+                    npm install --omit=dev
 
                     # Restart or start the app with PM2
                     if pm2 describe ${PM2_APP_NAME} > /dev/null 2>&1; then
