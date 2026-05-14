@@ -27,7 +27,7 @@ pipeline {
 
         stage('Lint') {
             steps {
-                sh 'npm run lint'
+                sh 'npx eslint .'
             }
         }
 
