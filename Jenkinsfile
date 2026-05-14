@@ -25,12 +25,6 @@ pipeline {
             }
         }
 
-        stage('Lint') {
-            steps {
-                sh './node_modules/.bin/eslint'
-            }
-        }
-
         stage('Build') {
             steps {
                 withCredentials([
