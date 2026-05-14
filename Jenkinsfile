@@ -34,7 +34,8 @@ pipeline {
         stage('Build') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'GEMINI_API_KEY', variable: 'GOOGLE_GENERATIVE_AI_API_KEY')
+                    string(credentialsId: 'GEMINI_API_KEY', variable: 'GOOGLE_GENERATIVE_AI_API_KEY'),
+                    string(credentialsId: 'GEMINI_MODEL', variable: 'GEMINI_MODEL')
                 ]) {
                     sh 'npm run build'
                 }
