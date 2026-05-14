@@ -65,8 +65,23 @@ pipeline {
                             pm2 reload "${PM2_APP_NAME}" --update-env
                         else
                             pm2 start ecosystem.config.js
-                            pm2 save
                         fi
+
+                        # Persist process list so app comes back after server reboot
+                        pm2 save
+
+                        # Healthcheck: poll localhost:3000 for up to 30s
+                        for i in $(seq 1 15); do
+                            if curl -fsS http://127.0.0.1:3000/ > /dev/null; then
+                                echo "Healthcheck OK after ${i} attempt(s)"
+                                exit 0
+                            fi
+                            sleep 2
+                        done
+
+                        echo "Healthcheck FAILED — dumping last 50 PM2 log lines:"
+                        pm2 logs "${PM2_APP_NAME}" --lines 50 --nostream || true
+                        exit 1
                     '''
                 }
             }
