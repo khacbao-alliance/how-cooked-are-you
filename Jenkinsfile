@@ -27,7 +27,7 @@ pipeline {
 
         stage('Lint') {
             steps {
-                sh 'npx eslint .'
+                sh './node_modules/.bin/eslint'
             }
         }
 
