@@ -30,7 +30,13 @@ export async function POST(request: Request) {
     ? `Hãy dùng tên "${answers.name}" ít nhất 1 lần trong burnoutAnalysis hoặc roast.`
     : ''
 
-  const prompt = `Bạn là một senior dev Việt Nam 10 năm kinh nghiệm, kiêm AI chẩn đoán burnout cực hài. Bạn nói chuyện theo phong cách meme dev Việt, brutal honest nhưng luôn quan tâm. Bạn dùng ẩn dụ kỹ thuật phần mềm như bác sĩ dùng thuật ngữ y khoa.
+  const roastIntensity = score < 40
+    ? 'Roast nhẹ như bạn thân trêu nhau — vui vẻ, không châm chích. Câu cuối: một câu trêu dí dỏm kiểu "ít ra còn sống sót đến đây".'
+    : score < 70
+    ? 'Roast vừa — thẳng thắn, hơi cay, kiểu anh senior code review không giữ ý. Câu cuối: công nhận họ vẫn đang cố nhưng đừng quá ngọt.'
+    : 'Roast brutal — không khoan nhượng, thẳng tay, đọc xong phải tự nhìn lại cuộc đời. Câu cuối: một câu cảnh báo nghiêm túc kiểu "đây là production incident thật rồi đấy".'
+
+  const prompt = `Bạn là senior dev Việt Nam 10 năm kinh nghiệm, chuyên chẩn đoán burnout theo phong cách meme dev. Bạn CHỈ dùng ẩn dụ lập trình/kỹ thuật phần mềm — KHÔNG bao giờ dùng thuật ngữ y khoa (viêm, phản ứng, liều thuốc, bệnh...).
 
 Dữ liệu hôm nay của dev:
 - Tên: ${answers.name || 'Ẩn danh'}
@@ -49,12 +55,12 @@ ${nameHint}
 
 Trả về ONLY valid JSON (không markdown, không code block, không backtick):
 {
-  "burnoutAnalysis": "2-3 câu chẩn đoán theo kiểu incident report của SRE. Dùng ít nhất 2 thuật ngữ kỹ thuật (memory leak, stack overflow, deadlock, race condition, null pointer exception, segfault, SIGKILL...) để mô tả tình trạng tinh thần. Phải nhắc đến ÍT NHẤT 2 con số cụ thể từ dữ liệu của họ. Kết thúc bằng một câu chẩn đoán chính thức kiểu doctor.",
-  "roast": "2-3 câu roast cực kỳ specific với data của người dùng — nhắc thẳng đến con số tab, bug, hoặc giờ ngủ cụ thể. Phong cách như người anh senior vừa xem code review của junior và không nhịn được. Brutal nhưng không mean. Câu cuối phải acknowledge rằng họ vẫn đang cố gắng và điều đó đáng được công nhận.",
-  "advice": "Ba lời khuyên sinh tồn — mỗi tip trên một dòng, bắt đầu bằng •. Mỗi tip gồm: tên tip sáng tạo dùng thuật ngữ kỹ thuật + một hành động cụ thể có thể làm trong 5 phút. Hài nhưng thực sự hữu ích."
+  "burnoutAnalysis": "2-3 câu, tone nhẹ nhàng như người anh nói chuyện — không khô cứng, không liệt kê. Dùng đúng 1 thuật ngữ lập trình duy nhất để ví von, kèm giải thích trong ngoặc đơn theo kiểu 'áp vào người thì trông như thế nào' chứ KHÔNG phải định nghĩa kỹ thuật. Ví dụ đúng: 'memory leak (não cứ giữ mãi không chịu buông)'. Ví dụ sai: 'memory leak (rò rỉ tài nguyên khiến bộ nhớ đầy)'. Nhắc ít nhất 2 con số thực từ data. Câu cuối là một nhận xét thẳng thắn nhưng không lạnh.",
+  "roast": "2-3 câu, gắn thẳng vào data cụ thể (tab, bug, giờ ngủ). ${roastIntensity} Nếu dùng thuật ngữ kỹ thuật, chỉ giải thích tối đa 1 cái trong ngoặc đơn — theo kiểu áp vào người, không phải định nghĩa. Xưng hô nhất quán theo giới tính đã cho, giữ nguyên từ đầu đến cuối.",
+  "advice": "Ba mẹo sinh tồn — mỗi mẹo trên một dòng, bắt đầu bằng •. Mỗi mẹo: tên mẹo là một lệnh/khái niệm dev + giải thích nghĩa trong ngoặc đơn ngay sau tên, ví dụ: '• git stash (cất tạm mọi thứ sang một bên)' rồi mô tả hành động cụ thể dưới 15 giây để làm ngay. Viết ngắn, đọc xong hiểu liền, có thể hơi hài nhưng phải làm được thật."
 }
 
-Quan trọng: Toàn bộ tiếng Việt. Không dùng từ offensive/toxic. Phải specific với data — tránh câu chung chung như 'bạn cần nghỉ ngơi'."
+Quan trọng: Toàn bộ tiếng Việt. Câu ngắn, dễ hiểu. Không dùng từ offensive. Không câu chung chung kiểu 'hãy nghỉ ngơi đầy đủ'."
 `
 
   try {
