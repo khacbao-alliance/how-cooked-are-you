@@ -31,15 +31,17 @@ function getMascot(key: keyof QuizAnswers, val: QuizAnswers[keyof QuizAnswers]) 
            : n <= 5  ? { face: '😬', say: 'Hơi nhiều đó nha...' }
            :           { face: '⚡', say: 'TIM ĐANG ĐẬP KHÔNG??' }
     case 'meetings':
-      return n === 0 ? { face: '🧘', say: 'Không tab nào? Bạn là thiền sư số.' }
-           : n <= 5  ? { face: '😌', say: 'Bình thường. RAM ổn.' }
-           : n <= 15 ? { face: '😵', say: 'PC bạn có còn thở không??' }
-           :           { face: '🤯', say: 'Đây không phải tab, đây là khủng hoảng.' }
+      return n === 0  ? { face: '🧘', say: 'Không tab nào? Bạn là thiền sư số.' }
+           : n <= 5   ? { face: '😌', say: 'Bình thường. RAM ổn.' }
+           : n <= 15  ? { face: '😵', say: 'PC bạn có còn thở không??' }
+           : n <= 30  ? { face: '🤯', say: 'Đây không phải tab, đây là khủng hoảng.' }
+           :            { face: '🔥', say: 'RAM đã bốc hơi. PC đang cầu nguyện.' }
     case 'quickCalls':
-      return n === 0 ? { face: '🧘', say: 'Backlog sạch bóng. Hiếm lắm!' }
-           : n <= 2  ? { face: '😐', say: 'Vẫn chịu đựng được...' }
-           : n <= 5  ? { face: '😰', say: 'URGENT ở đâu cũng thấy...' }
-           :           { face: '💀', say: 'Tất cả urgent = không cái nào urgent.' }
+      return n === 0  ? { face: '🧘', say: 'Backlog sạch bóng. Hiếm lắm!' }
+           : n <= 2   ? { face: '😐', say: 'Vẫn chịu đựng được...' }
+           : n <= 5   ? { face: '😰', say: 'URGENT ở đâu cũng thấy...' }
+           : n <= 10  ? { face: '💀', say: 'Tất cả urgent = không cái nào urgent.' }
+           :            { face: '☠️', say: '"URGENT" đã là trạng thái bình thường của bạn rồi.' }
     case 'bugs':
       return n === 0 ? { face: '✨', say: 'Code xịn! Hay là chưa test?' }
            : n <= 3  ? { face: '🐛', say: 'Ai code cũng có bug cả.' }
@@ -98,10 +100,10 @@ const QUESTIONS: QDef[] = [
     question: 'Hiện đang mở bao nhiêu tab Chrome?',
     subtext: 'Google Slide, Google Chat, docs, YouTube "học" — tất cả đều tính.',
     bg: 'from-sky-50 to-cyan-50', accent: '#0ea5e9',
-    options: [0,1,2,3,4,5,6,7,8,10,12,15,20,25,30].map(v => ({
+    options: [0,1,2,3,4,5,6,7,8,10,12,15,20,25,30,40,50,69,99].map(v => ({
       value: v,
-      label: `${v}`,
-      icon: v === 0 ? '🧘' : v <= 5 ? '😌' : v <= 15 ? '😵' : '🤯',
+      label: v === 99 ? '99+' : `${v}`,
+      icon: v === 0 ? '🧘' : v <= 5 ? '😌' : v <= 15 ? '😵' : v <= 30 ? '🤯' : '🔥',
     })),
   },
   {
@@ -109,10 +111,10 @@ const QUESTIONS: QDef[] = [
     question: 'Có bao nhiêu task bị gắn "URGENT"?',
     subtext: 'Alliance App, tin nhắn sếp — chỉ cần có chữ URGENT là tính.',
     bg: 'from-violet-50 to-purple-50', accent: '#8b5cf6',
-    options: [0,1,2,3,4,5,6,7,8,9,10].map(v => ({
+    options: [0,1,2,3,4,5,6,7,8,9,10,12,15,20].map(v => ({
       value: v,
       label: `${v}`,
-      icon: v === 0 ? '🌱' : v <= 2 ? '📌' : v <= 5 ? '🔥' : '☠️',
+      icon: v === 0 ? '🌱' : v <= 2 ? '📌' : v <= 5 ? '🔥' : v <= 10 ? '☠️' : '💀',
     })),
   },
   {
